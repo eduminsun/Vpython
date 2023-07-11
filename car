@@ -1,0 +1,185 @@
+# 2023/6/18 21:48 complete - physics(car)
+
+Web VPython 3.2
+
+print("Press the 'up' key to start.")   
+print("You can stop by pressing the 'spacebar' key.")
+
+# Create a box representing the car
+car_box = box(pos=vector(-32.5, 5, 0), size=vector(5, 3, 1), texture='https://cdn.pixabay.com/photo/2014/04/03/00/29/car-308456_1280.png') 
+car_box2 = box(pos=vector(-32.5, -5, 0), size=vector(-5, 3, 1), texture='https://cdn.pixabay.com/photo/2015/11/06/18/26/automobile-1029929_1280.png')
+
+# Draw car line
+lane_length=3
+num_lanes=10
+lane_offset=(60-num_lanes*lane_length)/(num_lanes-1)
+for i in range(num_lanes):
+    lane_pos=vec(-30+i*(lane_length+lane_offset), 0, 0)
+    lane=box(pos=lane_pos, size=vec(lane_length, 1, 0.1), color=color.white)
+    
+# Draw stop line
+stop=curve(pos=[vec(30, 10, 0), vec(30, -10, 0)], radius=0.3, color=color.red)
+label(pos=vec(30,13,0), text="STOP line", color=color.white)
+    
+# display (time)
+is_running=False
+paused_timea=0
+paused_timeb=0
+elapsed_time=0
+
+# Motion variables   ------------<<<students will adjust from here>>>-----------------
+v0_1=30 #initial velocity
+v0_2=30
+velocity1 = vec(v0_1, 0, 0)  
+velocity2 = vec(v0_2, 0, 0)
+acceleration_0=vec(0,0,0) #acceleration
+acceleration1=vec(-5,0,0) 
+acceleration2=vec(-10,0,0)
+dt=0.01
+is_stopped = False  # Stop flag
+#-----------------------------------------<<<to here>>>-----------------------------------
+
+#trail
+num=0
+car1_positions=[]
+car2_positions=[]
+car1_time=[]
+car2_time=[]
+
+
+
+    
+
+# Motion function
+def motion():
+    global is_stopped, is_running, elapsed_time, paused_timea, paused_timeb, dt, num
+    
+    while is_running:
+        rate(100)  # Frame rate
+        
+        if not is_stopped:
+            
+            if num==0:
+                sphere(pos=car_box.pos, color=color.white, radius=0.3)
+                car1_positions.append(0)
+                car1_time.append(elapsed_time)
+                sphere(pos=car_box2.pos, color=color.white, radius=0.3)
+                car2_positions.append(0)
+                car2_time.append(elapsed_time)
+            
+            elapsed_time+=dt
+            num+=1
+            
+#-----------------------------------------<<<students will make equations from here>>>-----------------------------------            
+            # Calculate the new velocity and position
+            velocity1.x += acceleration_0.x * dt #등속운동
+            velocity2.x += acceleration_0.x * dt
+                     
+            car_box.pos.x += velocity1.x * dt
+            car_box2.pos.x += velocity2.x * dt
+            
+            sa=(velocity1.x*elapsed_time)+(0.5*acceleration_0.x*(elapsed_time)**2)
+            sb=(velocity2.x*elapsed_time)+(0.5*acceleration_0.x*(elapsed_time)**2)
+            
+            label(pos=vec(10,23,0), text=f"<car1>\ntime: {elapsed_time:.2f} seconds \ndistance:{sa:.2f}", color=color.white)
+            label(pos=vec(30,23,0), text=f"<car2>\ntime: {elapsed_time:.2f} seconds \ndistance:{sb:.2f}", color=color.white)
+#-----------------------------------------------------<<<to here>>>-----------------------------------            
+            
+            # If the car pass the stop line, the color of the car changes to red
+            if car_box.pos.x+car_box.size.x/2 >= 30-0.15:
+                car_box.color=color.red
+            if car_box2.pos.x-car_box2.size.x/2 >= 30-0.15:
+                car_box2.color=color.red
+                
+            if (num%20)==0:
+                sphere(pos=car_box.pos, color=color.white, radius=0.3)
+                car1_positions.append(sa)
+                car1_time.append(elapsed_time)
+                sphere(pos=car_box2.pos, color=color.white, radius=0.3)
+                car2_positions.append(sb)
+                car2_time.append(elapsed_time)     
+            
+
+        elif is_stopped: #after the user press the spacebar key to stop the car
+            num+=1
+#등가속도운동---------------------------<<<students will make equations from here>>>-----------------------------------
+            if velocity1.x>0:  
+                paused_timea+=dt
+                s2a=sa+(v0_1*paused_timea)+(0.5*acceleration1.x*(paused_timea)**2)
+                
+                if (num%20)==0:
+                    sphere(pos=car_box.pos, color=color.white, radius=0.3)
+                    car1_positions.append(s2a)
+                    car1_time.append(elapsed_time+paused_timea)
+                    
+            if velocity2.x>0:
+                paused_timeb+=dt
+                s2b=sb+(v0_2*paused_timeb)+(0.5*acceleration2.x*(paused_timeb)**2)
+                
+                if (num%20)==0:
+                    sphere(pos=car_box2.pos, color=color.white, radius=0.3)
+                    car2_positions.append(s2b)
+                    car2_time.append(elapsed_time+paused_timeb)
+            
+            velocity1.x += acceleration1.x * dt
+            velocity2.x += acceleration2.x * dt
+            
+            car_box.pos.x += (velocity1.x*dt + 0.5*acceleration1.x*(dt)**2)
+            car_box2.pos.x += (velocity2.x*dt + 0.5*acceleration2.x*(dt)**2)
+            
+            label(pos=vec(10,23,0), text=f"<car1>\ntime: {elapsed_time+paused_timea:.2f} seconds \ndistance:{s2a:.2f}", color=color.white)
+            label(pos=vec(30,23,0), text=f"<car2>\ntime: {elapsed_time+paused_timeb:.2f} seconds \ndistance:{s2b:.2f}", color=color.white)
+#----------------------------------------------------------<<<to here>>>-----------------------------------            
+            if car_box.pos.x+car_box.size.x/2 >= 30-0.15:
+                car_box.color=color.red
+                
+            if velocity1.x<=0: #Car1 stop
+                velocity1.x=0
+                acceleration1.x=0
+                car_box.pos.x=car_box.pos.x
+                if car_box.pos.x+car_box.size.x/2 < 30-0.15:
+                    car_box.color=color.green
+                
+            if car_box2.pos.x-car_box2.size.x/2 >= 30-0.15:
+                car_box2.color=color.red
+                
+            if velocity2.x<=0:
+                velocity2.x=0
+                acceleration2.x=0
+                car_box2.pos.x=car_box2.pos.x
+                if car_box2.pos.x-car_box2.size.x/2 < 30-0.15:
+                    car_box2.color=color.green
+                    
+            if velocity1.x<=0 and velocity2.x<=0:
+                is_running=False
+    
+    #print result
+    print("Car 1:")
+    print("time:",car1_time)
+    print("pos:",car1_positions)
+    print("\nCar 2:")
+    print("time:",car2_time)
+    print("pos:",car2_positions)
+            
+            
+# Stop motion function
+def stop_motion(evt):
+    global is_stopped
+    
+    if evt.key==' ':
+        # Toggle the stop flag
+        is_stopped = not is_stopped
+     
+scene.bind('keydown', stop_motion)
+
+
+
+def start_motion(evt):
+    global is_running
+    
+    if evt.key == 'up':
+        if not is_running:
+            is_running = True
+            motion()
+
+scene.bind('keydown', start_motion)
