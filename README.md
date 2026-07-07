@@ -16,7 +16,7 @@ You can run it in the browser without installation using Web VPython(https://glo
 #### Linear Motion Simulation Link: https://glowscript.org/#/user/minsun/folder/MyPrograms/program/termproject/edit
 Press the "Run this program" button to explore the simulation.
 
-<img width="670" height="550" alt="Image" src="https://github.com/user-attachments/assets/46b15be2-a655-4fce-b676-7420e8b27ac2" />
+<img width="670" height="500" alt="Image" src="https://github.com/user-attachments/assets/46b15be2-a655-4fce-b676-7420e8b27ac2" />
 
 ## Related Essay
 https://edujournal2018.tistory.com/134
