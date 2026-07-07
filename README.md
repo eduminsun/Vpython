@@ -18,7 +18,7 @@ Press the "Run this program" button to explore the simulation.
 
 ## Related Essay
 https://edujournal2018.tistory.com/134
-This article ntroduces VPython with several examples, including a Linear Motion Simulation, and discusses its applicability in physics education.
+This article introduces VPython with several examples, including a Linear Motion Simulation, and discusses its applicability in physics education.
 
 ## Author
 Minsun Cho (minsunrose@naver.com, moon05@snu.ac.kr) 
